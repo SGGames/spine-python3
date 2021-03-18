@@ -150,7 +150,7 @@ class RotateTimeline(CurveTimeline):
             percent = 0.0
         elif percent > 1.0:
             percent = 1.0
-        percent = self.getCurvePercent(frameIndex / self.FRAME_SPACING - 1, percent)
+        percent = self.getCurvePercent(frameIndex // self.FRAME_SPACING - 1, percent)
 
         amount = self.frames[frameIndex + self.FRAME_VALUE] - lastFrameValue
         while amount > 180:
@@ -213,7 +213,7 @@ class TranslateTimeline(CurveTimeline):
             percent = 0.0
         if percent > 1.0:
             percent = 1.0
-        percent = self.getCurvePercent(frameIndex / self.FRAME_SPACING - 1, percent)
+        percent = self.getCurvePercent(frameIndex // self.FRAME_SPACING - 1, percent)
         
         bone.x = bone.x + (bone.data.x + lastFrameX + (self.frames[frameIndex + self.FRAME_X] - lastFrameX) * percent - bone.x) * alpha
         bone.y = bone.y + (bone.data.y + lastFrameY + (self.frames[frameIndex + self.FRAME_Y] - lastFrameY) * percent - bone.y) * alpha
@@ -249,7 +249,7 @@ class ScaleTimeline(TranslateTimeline):
             percent = 0.0
         elif percent > 1.0:
             percent = 1.0
-        percent = self.getCurvePercent(frameIndex / self.FRAME_SPACING - 1, percent)
+        percent = self.getCurvePercent(frameIndex // self.FRAME_SPACING - 1, percent)
         
         bone.scaleX += (bone.data.scaleX - 1 + lastFrameX + (self.frames[frameIndex + self.FRAME_X] - lastFrameX) * percent - bone.scaleX) * alpha
         bone.scaleY += (bone.data.scaleY - 1 + lastFrameY + (self.frames[frameIndex + self.FRAME_Y] - lastFrameY) * percent - bone.scaleY) * alpha
@@ -274,7 +274,7 @@ class ColorTimeline(CurveTimeline):
 
 
     def getKeyframeCount(self):
-        return len(self.frames) / self.FRAME_SPACING
+        return len(self.frames) // self.FRAME_SPACING
 
 
     def setKeyframe(self, keyframeIndex, time, r, g, b, a):
@@ -312,7 +312,7 @@ class ColorTimeline(CurveTimeline):
             percent = 0.0
         if percent > 255:
             percent = 255
-        percent = self.getCurvePercent(frameIndex / self.FRAME_SPACING - 1, percent)
+        percent = self.getCurvePercent(frameIndex // self.FRAME_SPACING - 1, percent)
 
         r = lastFrameR + (self.frames[frameIndex + self.FRAME_R] - lastFrameR) * percent
         g = lastFrameG + (self.frames[frameIndex + self.FRAME_G] - lastFrameG) * percent

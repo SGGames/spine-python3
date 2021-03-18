@@ -1,6 +1,15 @@
-spine-python
-============
+spine-python3
+=============
 
-A Pure Python implementation of the Esoteric Software Spine runtime for pygame.
+A Pure Python 3 implementation of the Esoteric Software Spine runtime for pygame.
 
-Check the pyguts/examples directory for instructions on using the API.
+Fork from: https://github.com/terrysimons/spine-python
+- Support python 3
+- Remove pyguts 
+- Work with https://github.com/SGGames/kivy-spine-python3
+
+### Install
+	pip install spine
+	
+	python setup.py install
+

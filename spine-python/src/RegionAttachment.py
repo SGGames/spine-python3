@@ -1,8 +1,8 @@
 import math
 
-import Attachment
+from .Attachment import Attachment
 
-class RegionAttachment(Attachment.Attachment):
+class RegionAttachment(Attachment):
     def __init__(self):
         super(RegionAttachment, self).__init__()
         self.x = 0.0

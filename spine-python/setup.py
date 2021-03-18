@@ -2,13 +2,13 @@
 
 from setuptools import setup
 
-setup(name='spine-python',
-      version='1.0b9',
-      description='A Pure Python Spine runtime.',
-      author='Terry Simons',
-      author_email='terry.simons@gmail.com',
-      url='https://github.com/terrysimons/spine-python/spine-python',
+setup(name='spine',
+      version='1.0',
+      description='A Pure Python 3 Spine runtime.',
+      author='atomixnmc',
+      author_email='atomixnmc@gmail.com',
+      url='https://github.com/SGGames/spine-python3',
       package_dir={'spine': 'src'},
-      packages=['spine', 'spine.Atlas', 'spine.Animation'],
+      packages=['spine'],
       classifiers=['License :: OSI Approved :: BSD License']
      )

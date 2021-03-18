@@ -1,6 +1,6 @@
-import Enum
+from .Enum import enum
 
-AttachmentType = Enum.enum(region=0, 
+AttachmentType = enum(region=0, 
                            regionSequence=1)
 
 class AttachmentLoader(object):

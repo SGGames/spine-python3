@@ -1,5 +1,5 @@
-from Bone import Bone
-from Slot import Slot
+from .Bone import Bone
+from .Slot import Slot
 
 class Skeleton(object):
     def __init__(self, skeletonData):
@@ -144,3 +144,5 @@ class Skeleton(object):
         self.time += delta
 
     
+    def draw(self):
+        return None

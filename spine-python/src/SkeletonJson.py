@@ -2,30 +2,15 @@ import json
 import os
 import sys
 
-import SkeletonData
-import BoneData
-import SlotData
-import Skin
-import AttachmentLoader
+from .SkeletonData import SkeletonData
+from .BoneData import BoneData
+from .SlotData import SlotData
+from .Skin import Skin
+from .AttachmentLoader import *
 
-import Animation
+from .Animation import * # Animation, Timeline, RotateTimeline, TranslateTimeline
 
-
-def readCurve(timeline, keyframeIndex, valueMap):
-    try:
-        curve = valueMap['curve']
-    except KeyError:
-        return timeline
-
-    if curve == 'stepped':
-        timeline.setStepped(keyframeIndex)
-    else:
-        timeline.setCurve(keyframeIndex, 
-                          float(curve[0]), 
-                          float(curve[1]),
-                          float(curve[2]),
-                          float(curve[3]))
-    return timeline
+from .util import readCurve
 
 
 class SkeletonJson(object):
@@ -57,10 +42,10 @@ class SkeletonJson(object):
                 print('The API has changed.  You need to load skeleton data with readSkeletonDataFile(), not readSkeletonData()')
                 sys.exit()
  
-        skeletonData = SkeletonData.SkeletonData()
+        skeletonData = SkeletonData()
                 
         for boneMap in root.get('bones', []):
-            boneData = BoneData.BoneData(name=boneMap['name'])
+            boneData = BoneData(name=boneMap['name'])
 
             if 'parent' in boneMap:
                 boneData.parent = skeletonData.findBone(boneMap['parent'])
@@ -82,7 +67,7 @@ class SkeletonJson(object):
 
             if not BoneData:
                 raise Exception('Slot bone not found: %s' % boneName)
-            slotData = SlotData.SlotData(name=slotName, boneData=boneData)
+            slotData = SlotData(name=slotName, boneData=boneData)
             
             if 'color' in slotMap:
                 s = slotMap['color']
@@ -98,7 +83,7 @@ class SkeletonJson(object):
             
         skinsMap = root.get('skins', {})
         for skinName in skinsMap.keys():
-            skin = Skin.Skin(skinName)
+            skin = Skin(skinName)
             skeletonData.skins.append(skin)
             if skinName == 'default':
                 skeletonData.defaultSkin = skin
@@ -116,9 +101,9 @@ class SkeletonJson(object):
                     typeString = attachmentMap.get('type', 'region')
 
                     if typeString == 'region':
-                        type = AttachmentLoader.AttachmentType.region
+                        type = AttachmentType.region
                     elif typeString == 'regionSequence':
-                        type = AttachmentLoader.AttachmentType.regionSequence
+                        type = AttachmentType.regionSequence
                     else:
                         raise Exception('Unknown attachment type: %s (%s)' % (attachment['type'],
                                                                                   attachmentName))
@@ -126,7 +111,7 @@ class SkeletonJson(object):
                     attachment = self.attachmentLoader.newAttachment(type, 
                                                                      attachmentMap.get('name', attachmentName))
 
-                    if type == AttachmentLoader.AttachmentType.region or type == AttachmentLoader.AttachmentType.regionSequence:
+                    if type == AttachmentType.region or type == AttachmentType.regionSequence:
                         regionAttachment = attachment
                         regionAttachment.name = attachmentName
                         regionAttachment.x = float(attachmentMap.get('x', 0.0)) * self.scale
@@ -169,7 +154,7 @@ class SkeletonJson(object):
                 values = timelineMap[timelineName]
                 
                 if timelineName == 'rotate':
-                    timeline = Animation.Timeline.RotateTimeline(len(values))
+                    timeline = RotateTimeline(len(values))
                     timeline.boneIndex = boneIndex
                     
                     keyframeIndex = 0
@@ -185,9 +170,9 @@ class SkeletonJson(object):
                     timeline = None
                     timelineScale = 1.0
                     if timelineName == 'scale':
-                        timeline = Animation.Timeline.ScaleTimeline(len(values))
+                        timeline = ScaleTimeline(len(values))
                     else:
-                        timeline = Animation.Timeline.TranslateTimeline(len(values))
+                        timeline = TranslateTimeline(len(values))
                         timelineScale = self.scale
                     timeline.boneIndex = boneIndex
                     
@@ -218,7 +203,7 @@ class SkeletonJson(object):
             for timelineName in timelineMap.keys():
                 values = timelineMap[timelineName]
                 if timelineName == 'color':
-                    timeline = Animation.Timeline.ColorTimeline(len(values))
+                    timeline = ColorTimeline(len(values))
                     timeline.slotIndex = slotIndex
                     
                     keyframeIndex = 0
@@ -232,11 +217,11 @@ class SkeletonJson(object):
                         timeline = readCurve(timeline, keyframeIndex, valueMap)
                         keyframeIndex += 1
                     timelines.append(timeline)
-                    if timeline.getDuration > duration:
+                    if timeline.getDuration() > duration:
                         duration = timeline.getDuration()
 
                 elif timelineName == 'attachment':
-                    timeline = Animation.Timeline.AttachmentTimeline(len(values))
+                    timeline = AttachmentTimeline(len(values))
                     timeline.slotIndex = slotIndex
                     
                     keyframeIndex = 0
@@ -245,12 +230,12 @@ class SkeletonJson(object):
                         timeline.setKeyframe(keyframeIndex, valueMap['time'], '' if not valueName else valueName)
                         keyframeIndex += 1
                     timelines.append(timeline)
-                    if timeline.getDuration > duration:
+                    if timeline.getDuration() > duration:
                         duration = timeline.getDuration()
                 else:
                     raise Exception('Invalid timeline type for a slot: %s (%s)' % (timelineName, slotName))
 
-        animation = Animation.Animation(name, timelines, duration)
+        animation = Animation(name, timelines, duration)
         return animation
                         
                 
